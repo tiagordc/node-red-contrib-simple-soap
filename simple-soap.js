@@ -12,9 +12,9 @@ module.exports = function (RED) {
 
     node.on('input', function(msg, nodeSend, nodeDone) {
 
-        const host = config.host;
-        const path = config.path;
-        const action = config.action;
+        const host = RED.util.getMessageProperty(msg, config.host);
+        const path = RED.util.getMessageProperty(msg, config.path);
+        const action = RED.util.getMessageProperty(msg, config.action);
 
         msg.topic = msg.topic || config.topic;
 
@@ -34,7 +34,7 @@ module.exports = function (RED) {
         reqOpts.headers['SOAPAction'] = `"${action}"`;
         reqOpts.encoding = null;
         reqOpts.forever = true;
-        reqOpts.body = config.body || msg.payload;
+        reqOpts.body = RED.util.getMessageProperty(msg, config.body);
 
         //credentials...
 
