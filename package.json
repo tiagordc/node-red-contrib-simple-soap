@@ -1,6 +1,6 @@
 {
   "name": "node-red-contrib-simple-soap",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Execute simple SOAP requests",
   "node-red": {
     "nodes": {
@@ -18,7 +18,7 @@
   "keywords": [
     "node-red",
     "node",
-    "SOAP"
+    "soap"
   ],
   "author": "Tiago Costa",
   "license": "MIT",

@@ -1,7 +1,7 @@
 <script type="text/x-red" data-template-name="simple-soap">
 
     <div class="form-row">
-        <label for="node-input-host"><i class="fa fa-globe-h"></i> Base URL</label>
+        <label for="node-input-host"><i class="fa fa-globe"></i> Base URL</label>
         <input type="text" id="node-input-host" style="width:70%;"/>
     </div>
 
@@ -13,6 +13,11 @@
     <div class="form-row">
         <label for="node-input-action"><i class="fa fa-cogs"></i> Action</label>
         <input type="text" id="node-input-action" style="width:70%;"/>
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-body"><i class="fa fa-code"></i> Body</label>
+        <input type="text" id="node-input-body" style="width:70%;"/>
     </div>
 
     <div class="form-row">
@@ -31,6 +36,7 @@
             host: { value: "", required: true },
             path: { value: "/", required: false },
             action: { value: "", required: true },
+            body: { value: "payload", required: true },
             topic: { value: "" }
         },
         inputs: 1,
@@ -40,9 +46,16 @@
             return this.name || "SOAP";
         },
         oneditprepare: function () {
+
+            if (this.body === undefined) {
+                $("#node-input-body").val("payload");
+            }
+
             $("#node-input-host").typedInput({ default: 'str', types: ['str', 'msg', 'flow', 'global', 'env'] });
             $("#node-input-path").typedInput({ default: 'str', types: ['str', 'msg', 'flow', 'global', 'env'] });
             $("#node-input-action").typedInput({ default: 'str', types: ['str', 'msg', 'flow', 'global', 'env'] });
+            $("#node-input-body").typedInput({ default: 'msg', types: ['str', 'msg', 'flow', 'global', 'env'] });
+
         }
     });
 

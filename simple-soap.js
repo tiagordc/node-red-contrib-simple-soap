@@ -34,8 +34,8 @@ module.exports = function (RED) {
         reqOpts.headers['SOAPAction'] = `"${action}"`;
         reqOpts.encoding = null;
         reqOpts.forever = true;
-        reqOpts.body = msg.payload;
-        
+        reqOpts.body = config.body || msg.payload;
+
         //credentials...
 
         request(reqOpts, function(err, response, body) {
