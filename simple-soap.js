@@ -12,9 +12,31 @@ module.exports = function (RED) {
 
     node.on('input', function(msg, nodeSend, nodeDone) {
 
-        const host = RED.util.getMessageProperty(msg, config.host);
-        const path = RED.util.getMessageProperty(msg, config.path);
-        const action = RED.util.getMessageProperty(msg, config.action);
+        //https://github.com/node-red/node-red/blob/master/packages/node_modules/%40node-red/nodes/core/common/20-inject.js
+
+        let host = config.host;
+
+        if (config.hostType === 'msg' || config.hostType === 'flow' || config.hostType === 'global') {
+            host = RED.util.evaluateNodeProperty(config.host, config.hostType, this, msg);
+        }
+
+        let path = config.path; 
+        
+        if (config.pathType === 'msg' || config.pathType === 'flow' || config.pathType === 'global') {
+            path = RED.util.evaluateNodeProperty(config.path, config.pathType, this, msg);
+        }
+
+        let action = config.action; 
+        
+        if (config.actionType === 'msg' || config.actionType === 'flow' || config.actionType === 'global') {
+            action = RED.util.evaluateNodeProperty(config.action, config.actionType, this, msg);
+        }
+
+        let reqBody = config.body;
+
+        if (config.bodyType === 'msg' || config.bodyType === 'flow' || config.bodyType === 'global') {
+            reqBody = RED.util.evaluateNodeProperty(config.body, config.bodyType, this, msg);
+        }
 
         msg.topic = msg.topic || config.topic;
 
@@ -34,11 +56,11 @@ module.exports = function (RED) {
         reqOpts.headers['SOAPAction'] = `"${action}"`;
         reqOpts.encoding = null;
         reqOpts.forever = true;
-        reqOpts.body = RED.util.getMessageProperty(msg, config.body);
+        reqOpts.body = reqBody;
 
         //credentials...
 
-        request(reqOpts, function(err, response, body) {
+        request(reqOpts, function(err, response, body) {            
 
             if (err) {
                 node.error(err, msg);
@@ -64,10 +86,11 @@ module.exports = function (RED) {
                         nodeDone();
                     }
                     else {
-                        msg.payload = sanitize(parseResult);
+                        var result = sanitize(parseResult);
+                        msg.payload = result;
                         node.status({});
                         nodeSend(msg);
-                        nodeDone();
+                        nodeDone();   
                     }
                 });
 
@@ -89,11 +112,14 @@ module.exports = function (RED) {
         var keys = Object.keys(message);
         var result = message;
         
-        if (keys.length === 1 && keys[0] === '0')
-            result = result['0'];  
-        
-        for (var prop in result) {
-            result[prop] = sanitize(result[prop]);
+        if (keys.length === 1 && keys[0] === '0') {
+            result = result['0'];     
+        }
+
+        if (typeof result === 'object')  {
+            for (var prop in result) {
+                result[prop] = sanitize(result[prop]);
+            }
         }
       
         return result;

@@ -1,6 +1,6 @@
 {
   "name": "node-red-contrib-simple-soap",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Execute SOAP requests and parse XML result",
   "node-red": {
     "nodes": {

@@ -3,21 +3,25 @@
     <div class="form-row">
         <label for="node-input-host"><i class="fa fa-globe"></i> Base URL</label>
         <input type="text" id="node-input-host" style="width:70%;"/>
+        <input type="hidden" id="node-input-hostType">
     </div>
 
     <div class="form-row">
         <label for="node-input-path"><i class="fa fa-folder-o"></i> Path</label>
         <input type="text" id="node-input-path" style="width:70%;"/>
+        <input type="hidden" id="node-input-pathType">
     </div>
 
     <div class="form-row">
         <label for="node-input-action"><i class="fa fa-cogs"></i> Action</label>
         <input type="text" id="node-input-action" style="width:70%;"/>
+        <input type="hidden" id="node-input-actionType">
     </div>
 
     <div class="form-row">
         <label for="node-input-body"><i class="fa fa-code"></i> Body</label>
         <input type="text" id="node-input-body" style="width:70%;"/>
+        <input type="hidden" id="node-input-bodyType">
     </div>
 
     <div class="form-row">
@@ -33,10 +37,14 @@
         category: 'network',
         color: '#cc66ff',
         defaults: {
-            host: { value: "", required: true },
-            path: { value: "/", required: false },
-            action: { value: "", required: true },
-            body: { value: "payload", required: true },
+            host: { value: "", required: true, validate: RED.validators.typedInput("hostType") },
+            hostType: { value: "str" },
+            path: { value: "/", required: false, validate: RED.validators.typedInput("pathType") },
+            pathType: { value: "str" },
+            action: { value: "", required: true, validate: RED.validators.typedInput("actionType") },
+            actionType: { value: "str" },
+            body: { value: "payload", required: true, validate: RED.validators.typedInput("bodyType") },
+            bodyType: { value: "msg" },
             topic: { value: "" }
         },
         inputs: 1,
@@ -47,14 +55,57 @@
         },
         oneditprepare: function () {
 
+            if (this.hostType == null || this.hostType === 'string' || this.hostType === 'none') {
+                this.hostType = "str";
+            }
+
+            $("#node-input-hostType").val(this.hostType);
+
+            $("#node-input-host").typedInput({ 
+                default: 'str', 
+                typeField: $("#node-input-hostType"),
+                types: ['str', 'msg', 'flow', 'global', 'env'] 
+            });
+
+            if (this.pathType == null || this.pathType === 'string' || this.pathType === 'none') {
+                this.pathType = "str";
+            }
+
+            $("#node-input-pathType").val(this.pathType);
+
+            $("#node-input-path").typedInput({ 
+                default: 'str',
+                typeField: $("#node-input-pathType"),
+                types: ['str', 'msg', 'flow', 'global', 'env'] 
+            });
+
+            if (this.actionType == null || this.actionType === 'string' || this.actionType === 'none') {
+                this.actionType = "str";
+            }
+
+            $("#node-input-actionType").val(this.actionType);
+
+            $("#node-input-action").typedInput({ 
+                default: 'str', 
+                typeField: $("#node-input-actionType"),
+                types: ['str', 'msg', 'flow', 'global', 'env'] 
+            });
+
+            if (this.bodyType == null || this.bodyType === 'string' || this.bodyType === 'none') {
+                this.bodyType = "msg";
+            }
+
             if (this.body === undefined) {
                 $("#node-input-body").val("payload");
             }
 
-            $("#node-input-host").typedInput({ default: 'str', types: ['str', 'msg', 'flow', 'global', 'env'] });
-            $("#node-input-path").typedInput({ default: 'str', types: ['str', 'msg', 'flow', 'global', 'env'] });
-            $("#node-input-action").typedInput({ default: 'str', types: ['str', 'msg', 'flow', 'global', 'env'] });
-            $("#node-input-body").typedInput({ default: 'msg', types: ['str', 'msg', 'flow', 'global', 'env'] });
+            $("#node-input-bodyType").val(this.bodyType);
+
+            $("#node-input-body").typedInput({ 
+                default: 'msg', 
+                typeField: $("#node-input-bodyType"),
+                types: ['str', 'msg', 'flow', 'global', 'env'] 
+            });
 
         }
     });
