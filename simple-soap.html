@@ -1,0 +1,46 @@
+<script type="text/x-red" data-template-name="simple-soap">
+
+    <div class="form-row">
+        <label for="node-input-host"><i class="fa fa-globe-h"></i> Base URL</label>
+        <input type="text" id="node-input-host" style="width:70%;"/>
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-path"><i class="fa fa-folder-o"></i> Path</label>
+        <input type="text" id="node-input-path" style="width:70%;"/>
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-action"><i class="fa fa-cogs"></i> Action</label>
+        <input type="text" id="node-input-action" style="width:70%;"/>
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-topic"><i class="icon-tag"></i> Topic</label>
+        <input type="text" id="node-input-topic" placeholder="" style="width: 70%;">
+    </div>
+
+  </script>
+
+<script type="text/javascript">
+
+    RED.nodes.registerType('simple-soap', {
+        category: 'network',
+        color: '#cc66ff',
+        defaults: {
+            host: { value: "", required: true },
+            path: { value: "/", required: false },
+            action: { value: "", required: true },
+            topic: { value: "" }
+        },
+        inputs: 1,
+        outputs: 1,
+        label: function () {
+            return this.name || "SOAP";
+        },
+        oneditprepare: function () {
+            $("#node-input-host").typedInput({ default: 'str', types: ['str', 'msg', 'flow', 'global', 'env'] });
+        }
+    });
+
+</script>

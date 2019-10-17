@@ -1,0 +1,29 @@
+{
+  "name": "node-red-contrib-simple-soap",
+  "version": "0.0.1",
+  "description": "Execute simple SOAP requests",
+  "main": "simple-soap.js",
+  "node-red": {
+    "nodes": {
+      "simple-soap": "simple-soap.js"
+    }
+  },
+  "dependencies": {
+    "request": "2.88.0",
+    "xml2js": "0.4.19"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tiagordc/node-red-contrib-simple-soap.git"
+  },
+  "keywords": [
+    "node-red",
+    "SOAP"
+  ],
+  "author": "Tiago Costa",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tiagordc/node-red-contrib-simple-soap/issues"
+  },
+  "homepage": "https://github.com/tiagordc/node-red-contrib-simple-soap#readme"
+}
