@@ -35,11 +35,14 @@
         },
         inputs: 1,
         outputs: 1,
+        icon: "white-globe.png",
         label: function () {
             return this.name || "SOAP";
         },
         oneditprepare: function () {
             $("#node-input-host").typedInput({ default: 'str', types: ['str', 'msg', 'flow', 'global', 'env'] });
+            $("#node-input-path").typedInput({ default: 'str', types: ['str', 'msg', 'flow', 'global', 'env'] });
+            $("#node-input-action").typedInput({ default: 'str', types: ['str', 'msg', 'flow', 'global', 'env'] });
         }
     });
 

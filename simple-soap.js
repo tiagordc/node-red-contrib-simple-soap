@@ -13,7 +13,7 @@ module.exports = function (RED) {
     node.on('input', function(msg, nodeSend, nodeDone) {
 
         const host = config.host;
-        const path = confing.path;
+        const path = config.path;
         const action = config.action;
 
         msg.topic = msg.topic || config.topic;
@@ -32,10 +32,10 @@ module.exports = function (RED) {
         reqOpts.headers = {};
         reqOpts.headers['Content-Type'] = 'text/xml;charset=UTF-8';
         reqOpts.headers['SOAPAction'] = `"${action}"`;
-
-        reqOpts.encoding = null;  // Force NodeJs to return a Buffer (instead of a string)
+        reqOpts.encoding = null;
         reqOpts.forever = true;
-
+        reqOpts.body = msg.payload;
+        
         //credentials...
 
         request(reqOpts, function(err, response, body) {
@@ -49,22 +49,22 @@ module.exports = function (RED) {
 
                 //https://github.com/node-red/node-red/blob/master/packages/node_modules/%40node-red/nodes/core/parsers/70-XML.js
 
-                var reqResult = body.payload.toString('utf8');
-                var parseString = xml2js.parseString;
+                var reqResult = body.toString('utf8');
+                var parseXml = xml2js.parseString;
 
                 var parseOpts = {};
                 parseOpts.async = true;
                 parseOpts.attrkey = '$';
                 parseOpts.charkey = '_';
 
-                parseString(reqResult, parseOpts, function (parseErr, parseResult) {
+                parseXml(reqResult, parseOpts, function (parseErr, parseResult) {
                     if (parseErr) { 
                         node.error(parseErr, msg); 
                         node.status({ fill: "red", shape: "ring", text: parseErr });
                         nodeDone();
                     }
                     else {
-                        msg.payload = parseResult;
+                        msg.payload = sanitize(parseResult);
                         node.status({});
                         nodeSend(msg);
                         nodeDone();
@@ -80,6 +80,25 @@ module.exports = function (RED) {
     node.on("close",function() {
         node.status({});
     });
+
+    function sanitize(message) {
+    
+        if (typeof message !== 'object') 
+            return message;
+        
+        var keys = Object.keys(message);
+        var result = message;
+        
+        if (keys.length === 1 && keys[0] === '0')
+            result = result['0'];  
+        
+        for (var prop in result) {
+            result[prop] = sanitize(result[prop]);
+        }
+      
+        return result;
+          
+    }
 
   };
 
