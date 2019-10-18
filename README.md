@@ -1,14 +1,18 @@
 # node-red-contrib-simple-soap
 
-The purpose of this project is to preform simple SOAP requests and parse the XML result in a single step.
+The purpose of this project is to perform simple SOAP requests and parse the XML result in a single step.
 
-This project doesn't require WSDL compliance.
+This node doesn't require WSDL compliance as it only executes POST requests to a specific web service endpoint.
 
 ## How it works:
 
-Unlike the default HTTP request where the URL is static in the node properties, simple-soap allows to use flow or env variables to define each property.
+Unlike the default HTTP request where the URL is static in the node properties, simple-soap allows to use custom variables to define each property.
 
 The SOAPAction header is also populated so there is no need for header customization.
+
+The output XML can be simplified by removing namespaces and collections if you don't use them.
+
+![node configuration](https://raw.githubusercontent.com/tiagordc/node-red-contrib-simple-soap/master/edit.png)
 
 ## Future:
 

@@ -25,6 +25,20 @@
     </div>
 
     <div class="form-row">
+        <label><i class="fa fa-sliders"></i> Options</label>        
+        <label for="node-input-stripPrefix" style="width:70%">
+            <input type="checkbox" id="node-input-stripPrefix" style="display:inline-block; width:22px; vertical-align:baseline;"> Remove namespaces
+        </label>
+    </div>
+
+    <div class="form-row">
+        <label></label>
+        <label for="node-input-simplify" style="width:70%">
+            <input type="checkbox" id="node-input-simplify" style="display:inline-block; width:22px; vertical-align:baseline;"> XML does not contain collections
+        </label>
+    </div>
+
+    <div class="form-row">
         <label for="node-input-topic"><i class="icon-tag"></i> Topic</label>
         <input type="text" id="node-input-topic" placeholder="" style="width: 70%;">
     </div>
@@ -45,6 +59,8 @@
             actionType: { value: "str" },
             body: { value: "payload", required: true, validate: RED.validators.typedInput("bodyType") },
             bodyType: { value: "msg" },
+            stripPrefix: { value: false },
+            simplify: { value: false },
             topic: { value: "" }
         },
         inputs: 1,

@@ -5,7 +5,6 @@ module.exports = function (RED) {
   function SimpleSOAP (config) {
 
     var request = require("request");
-    var xml2js = require('xml2js');
     
     RED.nodes.createNode(this, config);
     const node = this;
@@ -48,7 +47,9 @@ module.exports = function (RED) {
         reqOpts.url = host;
 
         if (path) {
-            reqOpts.url += path;
+            reqOpts.url = reqOpts.url.replace(/\/$/g, '');
+            reqOpts.url += '/';
+            reqOpts.url += path.replace(/^\//g, '');
         }
 
         reqOpts.headers = {};
@@ -57,8 +58,6 @@ module.exports = function (RED) {
         reqOpts.encoding = null;
         reqOpts.forever = true;
         reqOpts.body = reqBody;
-
-        //credentials...
 
         request(reqOpts, function(err, response, body) {            
 
@@ -71,6 +70,7 @@ module.exports = function (RED) {
 
                 //https://github.com/node-red/node-red/blob/master/packages/node_modules/%40node-red/nodes/core/parsers/70-XML.js
 
+                var xml2js = require('xml2js');
                 var reqResult = body.toString('utf8');
                 var parseXml = xml2js.parseString;
 
@@ -79,6 +79,11 @@ module.exports = function (RED) {
                 parseOpts.attrkey = '$';
                 parseOpts.charkey = '_';
 
+                if (config.stripPrefix) {
+                    var stripPrefix = require('xml2js').processors.stripPrefix;
+                    parseOpts.tagNameProcessors = [ stripPrefix ];
+                }
+
                 parseXml(reqResult, parseOpts, function (parseErr, parseResult) {
                     if (parseErr) { 
                         node.error(parseErr, msg); 
@@ -86,8 +91,7 @@ module.exports = function (RED) {
                         nodeDone();
                     }
                     else {
-                        var result = sanitize(parseResult);
-                        msg.payload = result;
+                        msg.payload = config.simplify ? simplify(parseResult) : parseResult;
                         node.status({});
                         nodeSend(msg);
                         nodeDone();   
@@ -104,7 +108,7 @@ module.exports = function (RED) {
         node.status({});
     });
 
-    function sanitize(message) {
+    function simplify(message) {
     
         if (typeof message !== 'object') 
             return message;
@@ -112,13 +116,13 @@ module.exports = function (RED) {
         var keys = Object.keys(message);
         var result = message;
         
-        if (keys.length === 1 && keys[0] === '0') {
+        if (keys.length === 1 && keys[0] === '0') { // instanceOf Array
             result = result['0'];     
         }
 
         if (typeof result === 'object')  {
             for (var prop in result) {
-                result[prop] = sanitize(result[prop]);
+                result[prop] = simplify(result[prop]);
             }
         }
       
