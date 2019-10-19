@@ -14,14 +14,16 @@ The output XML can be simplified by removing namespaces and collections if you d
 
 ![node configuration](https://raw.githubusercontent.com/tiagordc/node-red-contrib-simple-soap/master/edit.png)
 
-## Future:
+### Future:
 
 Custom headers and authentication coming soon
 
-### To install: 
+## To install: 
 
 Install node-red.
 
 Install this package with "npm install node-red-contrib-simple-soap --save" in ~./node-red or via the Palette Manager in node-red.
 
 If everything was successfull you should see the new simple-soap node under the network category.
+
+https://flows.nodered.org/node/node-red-contrib-simple-soap
