@@ -4,8 +4,8 @@
 [![Downloads][downloads-image]][npm-url]
 
 [npm-url]: https://npmjs.org/package/node-red-contrib-simple-soap
-[downloads-image]: http://img.shields.io/npm/dm/github-style-page.svg
-[npm-image]: http://img.shields.io/npm/v/github-style-page.svg
+[downloads-image]: https://img.shields.io/npm/dm/node-red-contrib-simple-soap.svg
+[npm-image]: https://img.shields.io/npm/v/node-red-contrib-simple-soap.svg
 
 The purpose of this project is to perform simple SOAP requests and parse the XML result in a single step.
 
