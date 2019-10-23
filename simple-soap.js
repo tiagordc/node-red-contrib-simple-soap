@@ -74,14 +74,19 @@ module.exports = function (RED) {
                 var reqResult = body.toString('utf8');
                 var parseXml = xml2js.parseString;
 
-                var parseOpts = {};
-                parseOpts.async = true;
-                parseOpts.attrkey = '$';
-                parseOpts.charkey = '_';
+                var parseOpts = {
+                    async: true,
+                    attrkey: (config.attrkey || '$'),
+                    charkey: (config.charkey || '_'),
+                    explicitArray: config.simplify,
+                    normalizeTags: config.normalizeTags,
+                    normalize: config.normalize
+                };
 
                 if (config.stripPrefix) {
                     var stripPrefix = require('xml2js').processors.stripPrefix;
                     parseOpts.tagNameProcessors = [ stripPrefix ];
+                    parseOpts.attrNameProcessors = [ stripPrefix ];
                 }
 
                 parseXml(reqResult, parseOpts, function (parseErr, parseResult) {
@@ -91,7 +96,7 @@ module.exports = function (RED) {
                         nodeDone();
                     }
                     else {
-                        msg.payload = config.simplify ? simplify(parseResult) : parseResult;
+                        msg.payload = parseResult;
                         node.status({});
                         nodeSend(msg);
                         nodeDone();   
@@ -107,28 +112,6 @@ module.exports = function (RED) {
     node.on("close",function() {
         node.status({});
     });
-
-    function simplify(message) {
-    
-        if (typeof message !== 'object') 
-            return message;
-        
-        var keys = Object.keys(message);
-        var result = message;
-        
-        if (keys.length === 1 && keys[0] === '0') { // instanceOf Array
-            result = result['0'];     
-        }
-
-        if (typeof result === 'object')  {
-            for (var prop in result) {
-                result[prop] = simplify(result[prop]);
-            }
-        }
-      
-        return result;
-          
-    }
 
   };
 

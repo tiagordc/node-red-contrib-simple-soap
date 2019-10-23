@@ -25,16 +25,40 @@
     </div>
 
     <div class="form-row">
-        <label><i class="fa fa-sliders"></i> Options</label>        
+        <label><i class="fa fa-sliders"></i> Response</label>
+        Attribute prefix: <input type="text" id="node-input-attrkey" style="width:50px;" />
+    </div>
+
+    <div class="form-row">
+        <label></label>
+        Content prefix: <input type="text" id="node-input-charkey" style="width:50px;" />
+    </div>
+
+    <div class="form-row">
+        <label></label>        
         <label for="node-input-stripPrefix" style="width:70%">
-            <input type="checkbox" id="node-input-stripPrefix" style="display:inline-block; width:22px; vertical-align:baseline;"> Remove namespaces from response
+            <input type="checkbox" id="node-input-stripPrefix" style="display:inline-block; width:22px; vertical-align:baseline;"> Remove namespaces
         </label>
     </div>
 
     <div class="form-row">
         <label></label>
         <label for="node-input-simplify" style="width:70%">
-            <input type="checkbox" id="node-input-simplify" style="display:inline-block; width:22px; vertical-align:baseline;"> Response does not contain collections
+            <input type="checkbox" id="node-input-simplify" style="display:inline-block; width:22px; vertical-align:baseline;"> Handle child nodes as arrays
+        </label>
+    </div>
+
+    <div class="form-row">
+        <label></label>
+        <label for="node-input-normalizeTags" style="width:70%">
+            <input type="checkbox" id="node-input-normalizeTags" style="display:inline-block; width:22px; vertical-align:baseline;"> Normalize all tag names to lowercase
+        </label>
+    </div>
+
+    <div class="form-row">
+        <label></label>
+        <label for="node-input-normalize" style="width:70%">
+            <input type="checkbox" id="node-input-normalize" style="display:inline-block; width:22px; vertical-align:baseline;"> Trim whitespaces inside text nodes
         </label>
     </div>
 
@@ -64,8 +88,12 @@
             actionType: { value: "str" },
             body: { value: "payload", required: true, validate: RED.validators.typedInput("bodyType") },
             bodyType: { value: "msg" },
+            attrkey: { value: "$" },
+            charkey: { value: "_" },
             stripPrefix: { value: false },
             simplify: { value: false },
+            normalizeTags: { value: false },
+            normalize: { value: false },
             topic: { value: "" },
             name: { value: "" }
         },

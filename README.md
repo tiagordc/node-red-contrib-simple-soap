@@ -1,11 +1,8 @@
 # node-red-contrib-simple-soap
 
-[![NPM version][npm-image]][npm-url]
-[![Downloads][downloads-image]][npm-url]
-
-[npm-url]: https://npmjs.org/package/node-red-contrib-simple-soap
-[downloads-image]: https://img.shields.io/npm/dm/node-red-contrib-simple-soap.svg
-[npm-image]: https://img.shields.io/npm/v/node-red-contrib-simple-soap.svg
+![GitHub package.json version](https://img.shields.io/github/package-json/v/tiagordc/node-red-contrib-simple-soap?label=package)
+![npm](https://img.shields.io/npm/v/node-red-contrib-simple-soap)
+![npm](https://img.shields.io/npm/dm/node-red-contrib-simple-soap)
 
 The purpose of this project is to perform simple SOAP requests and parse the XML result in a single step.
 
