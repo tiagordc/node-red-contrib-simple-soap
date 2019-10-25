@@ -2,119 +2,129 @@
 
 module.exports = function (RED) {
 
-  function SimpleSOAP (config) {
-
     var request = require("request");
-    
-    RED.nodes.createNode(this, config);
-    const node = this;
+    var mustache = require("mustache");
 
-    node.on('input', function(msg, nodeSend, nodeDone) {
+    function SimpleSOAP(config) {
 
-        //https://github.com/node-red/node-red/blob/master/packages/node_modules/%40node-red/nodes/core/common/20-inject.js
+        RED.nodes.createNode(this, config);
 
-        let host = config.host;
+        const node = this;
 
-        if (config.hostType === 'msg' || config.hostType === 'flow' || config.hostType === 'global') {
-            host = RED.util.evaluateNodeProperty(config.host, config.hostType, this, msg);
-        }
+        node.on('input', function (msg, nodeSend, nodeDone) {
 
-        let path = config.path; 
-        
-        if (config.pathType === 'msg' || config.pathType === 'flow' || config.pathType === 'global') {
-            path = RED.util.evaluateNodeProperty(config.path, config.pathType, this, msg);
-        }
+            //https://github.com/node-red/node-red/blob/master/packages/node_modules/%40node-red/nodes/core/common/20-inject.js
 
-        let action = config.action; 
-        
-        if (config.actionType === 'msg' || config.actionType === 'flow' || config.actionType === 'global') {
-            action = RED.util.evaluateNodeProperty(config.action, config.actionType, this, msg);
-        }
+            let host = config.host;
 
-        let reqBody = config.body;
+            if (config.hostType === 'msg' || config.hostType === 'flow' || config.hostType === 'global') {
+                host = RED.util.evaluateNodeProperty(config.host, config.hostType, this, msg);
+            }
 
-        if (config.bodyType === 'msg' || config.bodyType === 'flow' || config.bodyType === 'global') {
-            reqBody = RED.util.evaluateNodeProperty(config.body, config.bodyType, this, msg);
-        }
+            let path = config.path;
 
-        msg.topic = msg.topic || config.topic;
+            if (config.pathType === 'msg' || config.pathType === 'flow' || config.pathType === 'global') {
+                path = RED.util.evaluateNodeProperty(config.path, config.pathType, this, msg);
+            }
 
-        //https://github.com/node-red/node-red/blob/master/packages/node_modules/%40node-red/nodes/core/network/21-httprequest.js
+            let action = config.action;
 
-        let reqOpts = {};
-        reqOpts.method = "POST"; //assumption: only POST requests
+            if (config.actionType === 'msg' || config.actionType === 'flow' || config.actionType === 'global') {
+                action = RED.util.evaluateNodeProperty(config.action, config.actionType, this, msg);
+            }
 
-        reqOpts.url = host;
+            let reqBody = config.body;
 
-        if (path) {
-            reqOpts.url = reqOpts.url.replace(/\/$/g, '');
-            reqOpts.url += '/';
-            reqOpts.url += path.replace(/^\//g, '');
-        }
+            if (config.bodyType === 'msg' || config.bodyType === 'flow' || config.bodyType === 'global') {
+                reqBody = RED.util.evaluateNodeProperty(config.body, config.bodyType, this, msg);
+            }
 
-        reqOpts.headers = {};
-        reqOpts.headers['Content-Type'] = 'text/xml;charset=UTF-8';
-        reqOpts.headers['SOAPAction'] = `"${action}"`;
-        reqOpts.encoding = null;
-        reqOpts.forever = true;
-        reqOpts.body = reqBody;
+            if (config.mustache) {
+                const nodeContext = node.context();
+                var view = { msg: msg, flow: {}, global: {} };
+                nodeContext.flow.keys().forEach((e) => view.flow[e] = nodeContext.flow.get(e));
+                nodeContext.global.keys().forEach((e) => view.global[e] = nodeContext.global.get(e));
+                reqBody = mustache.render(reqBody, view);
+            }
 
-        request(reqOpts, function(err, response, body) {            
+            msg.topic = msg.topic || config.topic;
 
-            if (err) {
-                node.error(err, msg);
-                node.status({ fill: "red", shape: "ring", text: err.code });
-                nodeDone();
-            } 
-            else {
+            //https://github.com/node-red/node-red/blob/master/packages/node_modules/%40node-red/nodes/core/network/21-httprequest.js
 
-                //https://github.com/node-red/node-red/blob/master/packages/node_modules/%40node-red/nodes/core/parsers/70-XML.js
+            let reqOpts = {};
+            reqOpts.method = "POST"; //assumption: only POST requests
 
-                var xml2js = require('xml2js');
-                var reqResult = body.toString('utf8');
-                var parseXml = xml2js.parseString;
+            reqOpts.url = host;
 
-                var parseOpts = {
-                    async: true,
-                    attrkey: (config.attrkey || '$'),
-                    charkey: (config.charkey || '_'),
-                    explicitArray: config.simplify,
-                    normalizeTags: config.normalizeTags,
-                    normalize: config.normalize
-                };
+            if (path) {
+                reqOpts.url = reqOpts.url.replace(/\/$/g, '');
+                reqOpts.url += '/';
+                reqOpts.url += path.replace(/^\//g, '');
+            }
 
-                if (config.stripPrefix) {
-                    var stripPrefix = require('xml2js').processors.stripPrefix;
-                    parseOpts.tagNameProcessors = [ stripPrefix ];
-                    parseOpts.attrNameProcessors = [ stripPrefix ];
+            reqOpts.headers = {};
+            reqOpts.headers['Content-Type'] = 'text/xml;charset=UTF-8';
+            reqOpts.headers['SOAPAction'] = `"${action}"`;
+            reqOpts.encoding = null;
+            reqOpts.forever = true;
+            reqOpts.body = reqBody;
+
+            request(reqOpts, function (err, response, body) {
+
+                if (err) {
+                    node.error(err, msg);
+                    node.status({ fill: "red", shape: "ring", text: err.code });
+                    nodeDone();
+                }
+                else {
+
+                    //https://github.com/node-red/node-red/blob/master/packages/node_modules/%40node-red/nodes/core/parsers/70-XML.js
+
+                    var xml2js = require('xml2js');
+                    var reqResult = body.toString('utf8');
+                    var parseXml = xml2js.parseString;
+
+                    var parseOpts = {
+                        async: true,
+                        attrkey: (config.attrkey || '$'),
+                        charkey: (config.charkey || '_'),
+                        explicitArray: config.simplify,
+                        normalizeTags: config.normalizeTags,
+                        normalize: config.normalize
+                    };
+
+                    if (config.stripPrefix) {
+                        var stripPrefix = require('xml2js').processors.stripPrefix;
+                        parseOpts.tagNameProcessors = [stripPrefix];
+                        parseOpts.attrNameProcessors = [stripPrefix];
+                    }
+
+                    parseXml(reqResult, parseOpts, function (parseErr, parseResult) {
+                        if (parseErr) {
+                            node.error(parseErr, msg);
+                            node.status({ fill: "red", shape: "ring", text: parseErr });
+                            nodeDone();
+                        }
+                        else {
+                            msg.payload = parseResult;
+                            node.status({});
+                            nodeSend(msg);
+                            nodeDone();
+                        }
+                    });
+
                 }
 
-                parseXml(reqResult, parseOpts, function (parseErr, parseResult) {
-                    if (parseErr) { 
-                        node.error(parseErr, msg); 
-                        node.status({ fill: "red", shape: "ring", text: parseErr });
-                        nodeDone();
-                    }
-                    else {
-                        msg.payload = parseResult;
-                        node.status({});
-                        nodeSend(msg);
-                        nodeDone();   
-                    }
-                });
+            });
 
-            }
-            
         });
 
-    });
+        node.on("close", function () {
+            node.status({});
+        });
 
-    node.on("close",function() {
-        node.status({});
-    });
+    };
 
-  };
-
-  RED.nodes.registerType("simple-soap", SimpleSOAP);
+    RED.nodes.registerType("simple-soap", SimpleSOAP);
 
 };

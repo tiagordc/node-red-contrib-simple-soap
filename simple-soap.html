@@ -25,6 +25,13 @@
     </div>
 
     <div class="form-row">
+        <label></label>        
+        <label for="node-input-mustache" style="width:70%">
+            <input type="checkbox" id="node-input-mustache" style="display:inline-block; width:22px; vertical-align:baseline;"> Body is mustache template
+        </label>
+    </div>
+
+    <div class="form-row">
         <label><i class="fa fa-sliders"></i> Response</label>
         Attribute prefix: <input type="text" id="node-input-attrkey" style="width:50px;" />
     </div>
@@ -63,7 +70,7 @@
     </div>
 
     <div class="form-row">
-        <label for="node-input-topic"><i class="icon-tag"></i> Topic</label>
+        <label for="node-input-topic"><i class="fa fa-tags"></i> Topic</label>
         <input type="text" id="node-input-topic" placeholder="" style="width: 70%;">
     </div>
 
@@ -88,6 +95,7 @@
             actionType: { value: "str" },
             body: { value: "payload", required: true, validate: RED.validators.typedInput("bodyType") },
             bodyType: { value: "msg" },
+            mustache: { value: false },
             attrkey: { value: "$" },
             charkey: { value: "_" },
             stripPrefix: { value: false },

@@ -14,6 +14,8 @@ The SOAPAction header is also populated so there should be no need for header cu
 
 The output XML can be simplified with several parsing options available.
 
+SOAP body can be a [mustache.js](https://github.com/janl/mustache.js) template.
+
 To report an issue use the project [GitHub](https://github.com/tiagordc/node-red-contrib-simple-soap/issues) page
 
 ## Configuration:
