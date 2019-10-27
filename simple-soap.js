@@ -69,6 +69,13 @@ module.exports = function (RED) {
             reqOpts.forever = true;
             reqOpts.body = reqBody;
 
+            if (config.useAuth && node.credentials) {
+                reqOpts.auth = {
+                    user: node.credentials.user,
+                    pass: node.credentials.password || ""
+                };
+            }
+
             request(reqOpts, function (err, response, body) {
 
                 if (err) {
@@ -125,6 +132,11 @@ module.exports = function (RED) {
 
     };
 
-    RED.nodes.registerType("simple-soap", SimpleSOAP);
+    RED.nodes.registerType("simple-soap", SimpleSOAP, {
+        credentials: {
+            user: {type:"text"},
+            password: {type: "password"}
+        }
+    });
 
 };

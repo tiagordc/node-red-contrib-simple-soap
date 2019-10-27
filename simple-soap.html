@@ -70,6 +70,21 @@
     </div>
 
     <div class="form-row">
+        <input type="checkbox" id="node-input-useAuth" style="display: inline-block; width: auto; vertical-align: top;">
+        <label for="node-input-useAuth" style="width: 70%;">Authentication</label>
+        <div style="margin-left: 20px" class="node-input-useAuth-row hide">
+            <div class="form-row">
+                <label for="node-input-user"><i class="fa fa-user"></i> User</label>
+                <input type="text" id="node-input-user">
+            </div>
+            <div class="form-row">
+                <label for="node-input-password"> <i class="fa fa-lock"></i> Password</label>
+                <input type="password" id="node-input-password">
+            </div>
+        </div>
+    </div>
+
+    <div class="form-row">
         <label for="node-input-topic"><i class="fa fa-tags"></i> Topic</label>
         <input type="text" id="node-input-topic" placeholder="" style="width: 70%;">
     </div>
@@ -103,7 +118,12 @@
             normalizeTags: { value: false },
             normalize: { value: false },
             topic: { value: "" },
-            name: { value: "" }
+            name: { value: "" },
+            useAuth: { value: false }
+        },
+        credentials: {
+            user: { type: "text" },
+            password: {type: "password" }
         },
         inputs: 1,
         outputs: 1,
@@ -112,6 +132,16 @@
             return this.name || "SOAP";
         },
         oneditprepare: function () {
+
+            $("#node-input-useAuth").on("change", function() {
+                if ($(this).is(":checked")) {
+                    $(".node-input-useAuth-row").show();
+                } else {
+                    $(".node-input-useAuth-row").hide();
+                    $('#node-input-user').val('');
+                    $('#node-input-password').val('');
+                }
+            });
 
             if (this.hostType == null || this.hostType === 'string' || this.hostType === 'none') {
                 this.hostType = "str";
