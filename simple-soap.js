@@ -81,7 +81,9 @@ module.exports = function (RED) {
                 if (err) {
                     node.error(err, msg);
                     node.status({ fill: "red", shape: "ring", text: err.code });
-                    nodeDone();
+					if(nodeDone){
+						nodeDone();
+					}
                 }
                 else {
 
@@ -110,13 +112,21 @@ module.exports = function (RED) {
                         if (parseErr) {
                             node.error(parseErr, msg);
                             node.status({ fill: "red", shape: "ring", text: parseErr });
-                            nodeDone();
+							if(nodeDone){
+								nodeDone();
+							}
                         }
                         else {
                             msg.payload = parseResult;
                             node.status({});
-                            nodeSend(msg);
-                            nodeDone();
+                            if(nodeSend){
+								nodeSend(msg);
+							} else {
+								node.send(msg);
+							}
+							if(nodeDone){
+								nodeDone();
+							}
                         }
                     });
 
